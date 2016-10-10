@@ -10,7 +10,6 @@ function tmap-setup() {
    fi
    echo "${green}Please ensure that you have setup at least one shared folder for the VM. Press ENTER to continue.${reset}"
    read TMP
-   set +x
    sudo mkdir /mnt/shared
    sudo mount -t fuse.vmhgfs-fuse .host:/ /mnt/shared -o allow_other
    sudo sed -i.$(date "+%m%d%y").bak '$ a .host:/ /mnt/shared fuse.vmhgfs-fuse allow_other 0 0' /etc/fstab
@@ -21,8 +20,7 @@ function tmap-setup() {
    sudo apt update
    sudo apt install -y unattended-upgrades
    sudo apt full-upgrade -y
-   sudo sed -i.$(date "+%m%d%y").bak "$ a ./tmap-install.sh after-reboot" ~/.profile
-   set -x
+   sudo sed -i.$(date "+%m%d%y").bak "$ a ~/TMAP/tmap.sh after-reboot" ~/.profile
    echo "${green}The VM will now reboot and continue installation after the user logs back in. Press ENTER to continue.${reset}"
    read TMP
 }
@@ -45,8 +43,7 @@ function tmap-timemachine() {
       then
          TMNAME='TimeMachineVMX'
       fi
-	  set +x
-      sudo apt install -y build-essential devscripts debhelper cdbs autotools-dev dh-buildinfo libdb-dev libwrap0-dev libpam0g-dev libcups2-dev libkrb5-dev libltdl3-dev libgcrypt11-dev libcrack2-dev libavahi-client-dev libldap2-dev libacl1-dev libevent-dev d-shlibs dh-systemd avahi-daemon libc6-dev libnss-mdns git
+      sudo apt install -y build-essential devscripts debhelper cdbs autotools-dev dh-buildinfo libdb-dev libwrap0-dev libpam0g-dev libcups2-dev libkrb5-dev libltdl3-dev libgcrypt11-dev libcrack2-dev libavahi-client-dev libldap2-dev libacl1-dev libevent-dev d-shlibs dh-systemd avahi-daemon libc6-dev libnss-mdns
       mkdir ~/netatalk-git
       cd ~/netatalk-git
       git clone https://github.com/adiknoth/netatalk-debian.git
@@ -65,7 +62,6 @@ function tmap-timemachine() {
       sudo systemctl start netatalk.service
       sudo systemctl enable avahi-daemon.service
       sudo systemctl start avahi-daemon.service
-	  set -x
 }
 function tmap-airprint() {
       echo "${green}Please ensure that your printer is connected to the VM. Press ENTER to continue.${reset}"
