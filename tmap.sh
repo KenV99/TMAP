@@ -1,4 +1,6 @@
 #! /bin/bash
+green=`tput setaf 2`
+reset=`tput sgr 0`
 function tmap-setup() {
    echo -e "\e[32mPlease enter a name for this VM. This is how the VM will be seen on the network."
    read -p '[ubuntuVMX]' MNAME
@@ -6,7 +8,7 @@ function tmap-setup() {
    then
       MNAME='ubuntuVMX'
    fi
-   echo -e "\e[32mPlease ensure that you have setup at least one shared folder for the VM. Press ENTER to continue."
+   echo "${green}Please ensure that you have setup at least one shared folder for the VM. Press ENTER to continue.${reset}"
    read TMP
    set +x
    sudo mkdir /mnt/shared
@@ -21,24 +23,24 @@ function tmap-setup() {
    sudo apt full-upgrade -y
    sudo sed -i.$(date "+%m%d%y").bak "$ a ./tmap-install.sh after-reboot" ~/.profile
    set -x
-   echo -e "\e[32mThe VM will now reboot and continue installation after the user logs back in. Press ENTER to continue."
+   echo "${green}The VM will now reboot and continue installation after the user logs back in. Press ENTER to continue.${reset}"
    read TMP
 }
 function tmap-timemachine() {
-      echo -e "\e[32mPlease enter the name you used for the time machine directory when setting up your VM Shared folders."
-      read -p '[timemachine]:' TMSHARE
+      echo "${green}Please enter the name you used for the time machine directory when setting up your VM Shared folders."
+      read -p "[timemachine]:${reset}" TMSHARE
       if [ "$TMSHARE" == "" ]
       then
          TMSHARE='timemachine'
       fi
-      echo -e "\e[32mPlease enter a user name to be used when accessing this time machine backup server"
-      read -p '[timemachine]:' TMUNAME
+      echo -e "${green}Please enter a user name to be used when accessing this time machine backup server"
+      read -p "[timemachine]:${reset}" TMUNAME
       if [ "$TMUNAME" == "" ]
       then
          TMUNAME='timemachine'
       fi
-      echo -e "\e[32mPlease enter a name to be used to identify this time machine backup server on Apple computers"
-      read -p '[TimeMachineVMX]' TMNAME
+      echo "${green}Please enter a name to be used to identify this time machine backup server on Apple computers"
+      read -p "[TimeMachineVMX]${reset}" TMNAME
       if [ "$TMNAME" == "" ]
       then
          TMNAME='TimeMachineVMX'
@@ -66,9 +68,8 @@ function tmap-timemachine() {
 	  set -x
 }
 function tmap-airprint() {
-      echo -e "\e[32mPlease ensure that your printer is connected to the VM. Press ENTER to continue."
-	  read TMP
-	  set +x
+      echo "${green}Please ensure that your printer is connected to the VM. Press ENTER to continue.${reset}"
+	   read TMP
       sudo apt install -y samba
       sudo sed -i.$(date "+%m%d%y").bak '/\[printers\]/,/^\[/ s/browseable = no/browseable = yes/' /etc/samba/smb.conf
       sudo sed -i '/\[printers\]/,/^\[/ s/guest ok = no/guest ok = yes/'  /etc/samba/smb.conf
@@ -76,10 +77,9 @@ function tmap-airprint() {
       sudo apt install -y cups python-cups avahi-discover
       sudo cupsctl --remote-admin
       sudo systemctl restart cups
-	  set -x
-      echo -e "\e[32mOn your host machine open a browser and connect to your guest on port 631 \(i.e. http://guestname:631\)"
-      echo -e "\e[32m\'guestname\' will be the name you provided during the initial setup after installing ubuntu."
-      echo -e "\e[32mFollow the instructions to add your printer via the web interface."
+      echo "${green}On your host machine open a browser and connect to your guest on port 631 \(i.e. http://guestname:631\)"
+      echo "${green}\'guestname\' will be the name you provided during the initial setup after installing ubuntu."
+      echo "${green}Follow the instructions to add your printer via the web interface.${reset}"
 }
 
 if [ "$1" != "after-reboot" ]
@@ -87,18 +87,18 @@ then
    tmap-setup |& tee ~/tmap-setup.log
    sudo reboot
 else
-   echo -e "\e[32mResuming installation process. Press RETURN to continue."
+   echo "${green}Resuming installation process. Press RETURN to continue.${reset}"
    read TMP
    sudo sed -i "/after-reboot/d" ~/.profile
-   echo -e "\e[32mDo you want to create a Time Machine Server?"
-   read -p '[Y/n]' TMResponse
+   echo "${green}Do you want to create a Time Machine Server?"
+   read -p "[Y/n]${reset}" TMResponse
    if [ "$TMResponse" == "" ] || ["$TMResponse" == "Y" ] || ["$TMResponse" == "y" ]
    then
       tmap-timemachine |& tee ~/tmap-timemachine.log
    fi
 
-   echo -e "\e[32mDo you want to create an Airprint Server?"
-   read -p '[Y/n]' APResponse
+   echo "${green}Do you want to create an Airprint Server?"
+   read -p "[Y/n]${reset}" APResponse
    if [ "$APResponse" == "" ] || [ "$APResponse" == "Y" ] || [ "$APResponse" == "y"]
    then
       tmap-airprint |& tee ~/tmap-airprint.log
