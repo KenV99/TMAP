@@ -3,7 +3,7 @@ green=`tput setaf 2`
 reset=`tput sgr 0`
 function tmap-setup() {
    echo -e "${green}Please enter a name for this VM. This is how the VM will be seen on the network."
-   read -p '[ubuntuVMX]{reset}' MNAME
+   read -p "[ubuntuVMX]${reset}" MNAME
    if [ "$MNAME" == "" ]
    then
       MNAME='ubuntuVMX'
@@ -15,7 +15,7 @@ function tmap-setup() {
    sudo sed -i.$(date "+%m%d%y").bak '/^deb cdrom:/s/^/# /' /etc/apt/sources.list
    sudo dpkg-reconfigure tzdata
    sudo apt update
-   if [ "$OSSHResponse" == "" ] || ["$OSSHResponse" == "Y" ] || ["$OSSHResponse" == "y" ]
+   if [ "$OSSHResponse" == "" ] || [ "$OSSHResponse" == "Y" ] || [ "$OSSHResponse" == "y" ]
    then
       sudo apt install -y openssh-server
    fi
@@ -98,7 +98,7 @@ else
    sudo sed -i "/after-reboot/d" ~/.profile
    echo "${green}Do you want to create a Time Machine Server?"
    read -p "[Y/n]${reset}" TMResponse
-   if [ "$TMResponse" == "" ] || ["$TMResponse" == "Y" ] || ["$TMResponse" == "y" ]
+   if [ "$TMResponse" == "" ] || [ "$TMResponse" == "Y" ] || [ "$TMResponse" == "y" ]
    then
       tmap-timemachine |& tee ~/tmap-timemachine.log
    fi
