@@ -8,12 +8,18 @@ function tmap-setup() {
    then
       MNAME='ubuntuVMX'
    fi
+   echo -e "${green}If you plan to run the VM as a service, openssh-server should be installed so that you can log in while it is running under the SYSTEM account."
+   read -p  read -p "Install openssh-server? [Y/n]${reset}" OSSHResponse
    sudo sed -i.$(date "+%m%d%y").bak "s/ubuntu/$MNAME/g" /etc/hosts
    sudo sed -i.$(date "+%m%d%y").bak "s/ubuntu/$MNAME/g" /etc/hostname
    sudo sed -i.$(date "+%m%d%y").bak '/^deb cdrom:/s/^/# /' /etc/apt/sources.list
    sudo dpkg-reconfigure tzdata
    sudo apt update
-   sudo apt install -y unattended-upgrades
+   if [ "$OSSHResponse" == "" ] || ["$OSSHResponse" == "Y" ] || ["$OSSHResponse" == "y" ]
+   then
+      sudo apt install -y openssh-server
+   fi
+   sudo apt install -y unattended-upgrades ntp
    sudo apt full-upgrade -y
    sudo sed -i.$(date "+%m%d%y").bak "$ a ~/TMAP/tmap.sh after-reboot" ~/.profile
    echo "${green}The VM will now reboot and continue installation after the user logs back in."
