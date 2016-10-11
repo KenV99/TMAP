@@ -2,8 +2,8 @@
 green=`tput setaf 2`
 reset=`tput sgr 0`
 function tmap-setup() {
-   echo -e "\e[32mPlease enter a name for this VM. This is how the VM will be seen on the network."
-   read -p '[ubuntuVMX]' MNAME
+   echo -e "${green}Please enter a name for this VM. This is how the VM will be seen on the network."
+   read -p '[ubuntuVMX]{reset}' MNAME
    if [ "$MNAME" == "" ]
    then
       MNAME='ubuntuVMX'
@@ -55,9 +55,11 @@ function tmap-timemachine() {
       NETAT=`ls netatalk*.deb`
       sudo dpkg -i $NETAT
       sudo addgroup timemachine
-      sudo adduser --home /mnt/shared/$TMSHARE --no-create-home --ingroup timemachine $TMUNAME
-      sudo chown -R $TMUNAME:timemachine /mnt/shared/$TMSHARE
-      sudo sed -i.$(date "+%m%d%y").bak "$ a [$TMNAME]\ntime machine = yes\npath = /mnt/shared/$TMSHARE\nvol size limit = 980000\nvalid users = $TMUNAME\n" /etc/netatalk/afp.conf
+      TMPATH="/mnt/shared/$TMSHARE"
+      sudo adduser --home $TMPATH --no-create-home --ingroup timemachine $TMUNAME
+      sudo chown -R $TMUNAME:timemachine $TMPATH
+      sudo chmod 755 $TMPATH
+      sudo sed -i.$(date "+%m%d%y").bak "$ a [$TMNAME]\ntime machine = yes\npath = $TMPATH \nvol size limit = 980000\nvalid users = $TMUNAME\n" /etc/netatalk/afp.conf
       sudo systemctl enable netatalk.service
       sudo systemctl start netatalk.service
       sudo systemctl enable avahi-daemon.service
@@ -95,7 +97,7 @@ else
 
    echo "${green}Do you want to create an Airprint Server?"
    read -p "[Y/n]${reset}" APResponse
-   if [ "$APResponse" == "" ] || [ "$APResponse" == "Y" ] || [ "$APResponse" == "y"]
+   if [ "$APResponse" == "" ] || [ "$APResponse" == "Y" ] || [ "$APResponse" == "y" ]
    then
       tmap-airprint |& tee ~/tmap-airprint.log
    fi
